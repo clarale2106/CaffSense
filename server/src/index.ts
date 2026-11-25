@@ -3,16 +3,20 @@ import express from "express";
 import cors from "cors";
 import Database from "better-sqlite3";
 import path from "node:path";
+import { mkdirSync } from "node:fs";
 import "dotenv/config";
 import { GoogleGenAI } from "@google/genai";
 
 const app = express();
-const PORT = 3001;
+const PORT = Number(process.env.PORT ?? 3001);
+const HOST = "0.0.0.0";
 
-app.use(cors());
+app.use(cors(process.env.FRONTEND_URL ? { origin: process.env.FRONTEND_URL } : undefined));
 app.use(express.json());
 
-const db = new Database(path.join(process.cwd(), "caffsense.db"));
+const dbPath = process.env.DB_PATH ?? path.join(process.cwd(), "caffsense.db");
+mkdirSync(path.dirname(dbPath), { recursive: true });
+const db = new Database(dbPath);
 const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-flash-lite-latest";
 
 const CHAT_SYSTEM_INSTRUCTION = `You are CaffSense Chat, a kind and helpful assistant.
@@ -283,7 +287,7 @@ app.post("/api/chat", async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`CaffSense backend running at http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+    console.log(`CaffSense backend running on ${HOST}:${PORT}`);
 });
 

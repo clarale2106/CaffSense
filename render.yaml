@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: caffsense-frontend
+    runtime: static
+    rootDir: .
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: caffsense-backend
+          envVarKey: RENDER_EXTERNAL_URL
+
+  - type: web
+    name: caffsense-backend
+    runtime: node
+    plan: starter
+    rootDir: server
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-flash-lite-latest
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: caffsense-frontend
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: DB_PATH
+        value: /var/data/caffsense.db
+    disk:
+      name: caffsense-data
+      mountPath: /var/data
+      sizeGB: 1

@@ -1,7 +1,12 @@
 import type { Activity, Caffeine, ChatMessage, Day, Sleep } from "./types";
 
+const configuredApiUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, "");
+const API_BASE = configuredApiUrl
+    ? configuredApiUrl.endsWith("/api") ? configuredApiUrl : `${configuredApiUrl}/api`
+    : "/api";
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-    const res = await fetch("/api" + path, { headers: { "Content-Type": "application/json" }, ...init });
+    const res = await fetch(API_BASE + path, { headers: { "Content-Type": "application/json" }, ...init });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error ?? "Request failed.");
     return data as T;
