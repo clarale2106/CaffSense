@@ -15,7 +15,6 @@ services:
   - type: web
     name: caffsense-backend
     runtime: node
-    plan: starter
     rootDir: server
     buildCommand: npm ci
     startCommand: npm start
@@ -30,9 +29,3 @@ services:
           type: web
           name: caffsense-frontend
           envVarKey: RENDER_EXTERNAL_URL
-      - key: DB_PATH
-        value: /var/data/caffsense.db
-    disk:
-      name: caffsense-data
-      mountPath: /var/data
-      sizeGB: 1
