@@ -18,6 +18,7 @@ const dbPath = process.env.DB_PATH ?? path.join(process.cwd(), "caffsense.db");
 mkdirSync(path.dirname(dbPath), { recursive: true });
 const db = new Database(dbPath);
 const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-flash-lite-latest";
+const FALLBACK_GEMINI_MODEL = "gemini-flash-lite-latest";
 
 const CHAT_SYSTEM_INSTRUCTION = `You are CaffSense Chat, a kind and helpful assistant.
 
@@ -266,15 +267,35 @@ app.post("/api/chat", async (req, res) => {
 
     try {
         const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-        const response = await ai.models.generateContent({
-            model: GEMINI_MODEL,
-            contents,
-            config: {
-                systemInstruction: CHAT_SYSTEM_INSTRUCTION,
-                temperature: 0.6,
-                maxOutputTokens: 700,
-            },
-        });
+        const models = GEMINI_MODEL === FALLBACK_GEMINI_MODEL
+            ? [GEMINI_MODEL]
+            : [GEMINI_MODEL, FALLBACK_GEMINI_MODEL];
+        let response;
+        let lastError: unknown;
+
+        for (const model of models) {
+            try {
+                response = await ai.models.generateContent({
+                    model,
+                    contents,
+                    config: {
+                        systemInstruction: CHAT_SYSTEM_INSTRUCTION,
+                        temperature: 0.6,
+                        maxOutputTokens: 700,
+                    },
+                });
+                break;
+            } catch (error) {
+                lastError = error;
+                const status = (error as { status?: number }).status;
+                if (model === FALLBACK_GEMINI_MODEL || ![404, 429, 500, 502, 503].includes(status ?? 0)) {
+                    throw error;
+                }
+                console.warn(`Gemini model ${model} failed with status ${status}; trying fallback.`);
+            }
+        }
+
+        if (!response) throw lastError ?? new Error("Gemini returned no response.");
         const reply = response.text?.trim();
         if (!reply) {
             res.status(502).json({ error: "Gemini returned an empty response." });
