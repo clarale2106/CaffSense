@@ -1,0 +1,651 @@
+/* =========================================
+   CAFFSENSE — GLOBAL THEME
+   ========================================= */
+
+:root {
+    --bg: #eef4ff;
+    --card: #ffffff;
+    --ink: #0f1f3d;
+    --mut: #5b6b8c;
+    --pri: #1d4ed8;
+    --pri2: #3b82f6;
+    --soft: #dbeafe;
+    --line: #d5e1f7;
+    --warn: #e11d48;
+    --ok: #059669;
+    --shadow: rgba(59, 130, 246, 0.08);
+    --smooth: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Dark mode */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0a1226;
+        --card: #121c38;
+        --ink: #e8efff;
+        --mut: #9fb0d4;
+        --pri: #60a5fa;
+        --soft: #1b2a52;
+        --line: #233461;
+        --shadow: rgba(0, 0, 0, 0.15);
+        color-scheme: dark;
+    }
+}
+
+/* =========================================
+   GLOBAL RESET
+   ========================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    margin: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, -apple-system,
+        "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    justify-content: center;
+    -webkit-font-smoothing: antialiased;
+}
+
+#root {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+button,
+input,
+select {
+    font-family: inherit;
+}
+
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible {
+    outline: 2px solid var(--pri2);
+    outline-offset: 3px;
+}
+
+/* =========================================
+   APPLICATION LAYOUT
+   ========================================= */
+
+.app {
+    width: 100%;
+    max-width: 430px;
+    height: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+header {
+    flex-shrink: 0;
+    padding: calc(22px + env(safe-area-inset-top, 0px)) 22px 20px;
+    background: linear-gradient(135deg,
+            #1e3a8a,
+            #2563eb 60%,
+            #60a5fa);
+    color: #ffffff;
+    border-radius: 0 0 28px 28px;
+    box-shadow: 0 6px 24px rgba(37, 99, 235, 0.15);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 750;
+    letter-spacing: -0.5px;
+}
+
+header p {
+    margin: 5px 0 0;
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+/* =========================================
+   MAIN CONTENT
+   ========================================= */
+
+main {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 18px 16px 100px;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+}
+
+/* Smooth page transitions */
+
+@keyframes pageEnter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page-transition {
+    animation: pageEnter 0.35s var(--smooth) both;
+}
+
+/* =========================================
+   CARDS
+   ========================================= */
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 18px var(--shadow);
+    transition:
+        transform 0.25s var(--smooth),
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+@media (hover: hover) {
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px var(--shadow);
+        border-color: var(--pri2);
+    }
+}
+
+.card h2 {
+    margin: 0 0 12px;
+    font-size: 15px;
+    font-weight: 650;
+}
+
+.row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.big {
+    font-size: 34px;
+    font-weight: 750;
+    color: var(--pri);
+    letter-spacing: -1px;
+}
+
+.mut {
+    color: var(--mut);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* =========================================
+   ANIMATED BOTTOM NAVIGATION
+   ========================================= */
+
+nav {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    background: var(--card);
+    border-top: 1px solid var(--line);
+    border-radius: 22px 22px 0 0;
+    padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -5px 24px var(--shadow);
+    isolation: isolate;
+    z-index: 10;
+}
+
+/* Sliding blue indicator */
+
+.nav-indicator {
+    position: absolute;
+    top: 8px;
+    left: 6px;
+    bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    width: calc((100% - 12px) / 5);
+    background: var(--soft);
+    border-radius: 14px;
+    transition: transform 0.35s var(--smooth);
+    pointer-events: none;
+    z-index: 0;
+}
+
+nav button {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    background: transparent;
+    border: 0;
+    color: var(--mut);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 9px 0;
+    cursor: pointer;
+    border-radius: 14px;
+    transition:
+        color 0.25s ease,
+        transform 0.2s var(--smooth);
+}
+
+nav button span {
+    display: block;
+    font-size: 21px;
+    margin-bottom: 4px;
+    transition: transform 0.3s var(--smooth);
+}
+
+nav button.on {
+    color: var(--pri);
+    font-weight: 700;
+    background: transparent;
+}
+
+nav button.on span {
+    transform: translateY(-2px) scale(1.1);
+}
+
+nav button:active {
+    transform: scale(0.92);
+}
+
+@media (hover: hover) {
+    nav button:hover {
+        color: var(--pri);
+    }
+
+    nav button:hover span {
+        transform: translateY(-2px);
+    }
+}
+
+/* =========================================
+   FORM INPUTS
+   ========================================= */
+
+label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--mut);
+    margin: 12px 0 6px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 15px;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+input:focus,
+select:focus {
+    border-color: var(--pri2);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+input::placeholder {
+    color: var(--mut);
+    opacity: 0.7;
+}
+
+/* =========================================
+   PRIMARY BUTTONS
+   ========================================= */
+
+.btn {
+    width: 100%;
+    margin-top: 14px;
+    padding: 14px;
+    border: 0;
+    border-radius: 15px;
+    background: linear-gradient(135deg,
+            var(--pri2),
+            #1d4ed8);
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+    transition:
+        transform 0.2s var(--smooth),
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+@media (hover: hover) {
+    .btn:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.06);
+        box-shadow: 0 8px 22px rgba(37, 99, 235, 0.22);
+    }
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* =========================================
+   SEGMENTED CONTROLS
+   ========================================= */
+
+.seg {
+    display: flex;
+    background: var(--soft);
+    border-radius: 15px;
+    padding: 4px;
+    margin-bottom: 16px;
+}
+
+.seg button {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    padding: 11px;
+    border-radius: 12px;
+    color: var(--mut);
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.2s ease;
+}
+
+.seg button.on {
+    background: var(--card);
+    color: var(--pri);
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.seg button:active {
+    transform: scale(0.96);
+}
+
+/* =========================================
+   CAFFEINE LOG ITEMS
+   ========================================= */
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.item:last-child {
+    border: 0;
+}
+
+.x {
+    background: transparent;
+    border: 0;
+    color: var(--warn);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.x:hover {
+    background: rgba(225, 29, 72, 0.08);
+}
+
+.x:active {
+    transform: scale(0.9);
+}
+
+/* =========================================
+   STATUS MESSAGES
+   ========================================= */
+
+.err {
+    color: var(--warn);
+    font-size: 13px;
+    margin-top: 8px;
+    min-height: 16px;
+}
+
+.okmsg {
+    color: var(--ok);
+    font-size: 13px;
+    margin-top: 8px;
+    min-height: 16px;
+}
+
+.err:not(:empty),
+.okmsg:not(:empty) {
+    animation: pageEnter 0.3s var(--smooth);
+}
+
+/* =========================================
+   CHAT
+   ========================================= */
+
+.chat-intro h2 {
+    margin-bottom: 6px;
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 48dvh;
+    overflow-y: auto;
+    padding: 8px 0 14px;
+}
+
+.chat-message {
+    max-width: 88%;
+    padding: 11px 13px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.chat-message.model {
+    align-self: flex-start;
+    background: var(--soft);
+    border-bottom-left-radius: 5px;
+}
+
+.chat-message.user {
+    align-self: flex-end;
+    background: var(--pri2);
+    color: #fff;
+    border-bottom-right-radius: 5px;
+}
+
+.chat-form textarea {
+    resize: vertical;
+    min-height: 54px;
+}
+
+/* =========================================
+   WELLNESS TIPS
+   ========================================= */
+
+.tip {
+    background: var(--soft);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+@media (hover: hover) {
+    .tip:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px var(--shadow);
+    }
+}
+
+/* =========================================
+   ACTIVITY GRID
+   ========================================= */
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.act {
+    background: var(--soft);
+    border-radius: 18px;
+    padding: 18px 14px;
+    text-align: center;
+    font-size: 13px;
+    transition:
+        transform 0.25s var(--smooth),
+        box-shadow 0.25s ease;
+}
+
+.act b {
+    display: block;
+    font-size: 28px;
+    margin-bottom: 6px;
+}
+
+@media (hover: hover) {
+    .act:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px var(--shadow);
+    }
+}
+
+.act:active {
+    transform: scale(0.97);
+}
+
+/* =========================================
+   CHART ANIMATIONS
+   ========================================= */
+
+svg text {
+    fill: var(--mut);
+    font-size: 10px;
+}
+
+svg circle {
+    transition:
+        stroke-dasharray 0.7s var(--smooth),
+        stroke-dashoffset 0.7s var(--smooth),
+        stroke 0.3s ease;
+}
+
+svg rect {
+    transition:
+        height 0.5s var(--smooth),
+        y 0.5s var(--smooth),
+        fill 0.25s ease;
+}
+
+/* =========================================
+   DESKTOP DISPLAY
+   ========================================= */
+
+@media (min-width: 600px) {
+    .app {
+        box-shadow: 0 0 60px var(--shadow);
+    }
+}
+
+/* =========================================
+   SMALL MOBILE SCREENS
+   ========================================= */
+
+
+@media (max-width: 360px) {
+    main {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .card {
+        padding: 14px;
+    }
+
+    header h1 {
+        font-size: 22px;
+    }
+
+    .big {
+        font-size: 28px;
+    }
+}
+
+/* =========================================
+   ACCESSIBILITY
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+}
